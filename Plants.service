@@ -1,0 +1,20 @@
+[Unit]
+Description=Plants irrygator water pomp
+After=time-sync.target
+StartLimitIntervalSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=sudo python3 /home/pi/Desktop/projekty/power_plant/main.py
+RestartSec=1
+Restart=always
+User=pi
+StandardInput=null
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=%N
+#SyslogFacility=user
+#SyslogLevelPrefix=yes
