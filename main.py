@@ -11,6 +11,14 @@ import signal
 class Plant:
 
     def __init__(self, name: str, pump_number: int, watering_length: float, watering_time: list, logging):
+        """
+        Create a new plant
+        :param name: Name of plant
+        :param pump_number: number of rpi pin which connect to controlled pump
+        :param watering_length: length time on pump
+        :param watering_time: list of time which a plant will by irrigating
+        :param logging: logger object
+        """
         self.logger = logging
         self.name = name
         self.pump_nr = pump_number
@@ -19,7 +27,7 @@ class Plant:
         self.time_keeper = TimeKeeper(TimeKeeper.get_current_time(), pump_nr=pump_number)
         self.logger.info(f'\nCreate plant: {self.name}\n'
                          f'pump_pin_nr: {self.pump_nr}\n'
-                         f'watering lenght {self.watering_length}\n'
+                         f'watering length {self.watering_length}\n'
                          f'watering timing: {self.water_time}')
 
     def get_name(self):
@@ -56,19 +64,21 @@ class Plant:
 
 class PlantWater(PumpDriver):
     # czas podlewania
-    LARGE_PEPPER_P1 = 5
-    PEPPERS_AND_ROSE_P2 = 4.5
-    FLYCATCHER_P3 = 2
-    JALAPENO_PEPPERS_P4 = 2
-    HERBS_P5 = 6
+    LARGE_PEPPER_P1 = 5.5
+    PEPPERS_AND_ROSE_P2 = 3
+    FLYCATCHER_P3 = 5
+    JALAPENO_PEPPERS_P4 = 3
+    HERBS_P5 = 6.5
     NONE_P6 = 5
 
     # czasy w ktorych sa podlewane kwiaty
-    WATERING_LARGE_PEPPER = ['08:10:00', '12:05:30', '15:28:40', '21:15:00']
+    # WATERING_LARGE_PEPPER = ['08:10:00', '11:55:30', '12:35:30', '15:28:40', '18:28:40', '21:15:00']
+    WATERING_LARGE_PEPPER = ['11:55:30', '12:35:30', '18:28:40', '21:15:00']
     WATERING_PEPPERS_AND_ROSE = ['11:30:20', '21:16:00']
-    WATERING_FLYCATCHER = ['09:00:20', '21:17:00']
-    WATERING_JALAPENO_PEPPERS = ['10:25:50']
-    WATERING_HERBS = ['12:49:50']
+    WATERING_FLYCATCHER = ['09:00:20', '17:44:11', '21:17:00']
+    # WATERING_FLYCATCHER = ['21:17:00']
+    WATERING_JALAPENO_PEPPERS = ['10:25:50', '14:24:30']
+    WATERING_HERBS = ['12:49:50', '18:49:50']
 
     def __init__(self):
         super(PlantWater, self).__init__()
@@ -133,7 +143,8 @@ class PlantWater(PumpDriver):
     def start_water_new(self, my_plant: Plant):
         self.water_plant(my_plant.get_pump_nr(), my_plant.watering_length)
         my_plant.get_time_keeper().set_time_last_watered(TimeKeeper.get_current_time())
-        self.logger.info(f"\nPlant {my_plant.get_name()} was last watered at {my_plant.get_time_keeper().time_last_watered}")
+        self.logger.info(f"\nPlant {my_plant.get_name()} was last watered at "
+                         f"{my_plant.get_time_keeper().time_last_watered}")
 
     def check_time_to_water(self, watering_plant: Plant, current_time):
         for watering in watering_plant.get_watering_time():
